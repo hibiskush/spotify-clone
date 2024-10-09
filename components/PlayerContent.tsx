@@ -6,10 +6,11 @@ import LikeButton from "./LikeButton";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
-import Slider from "./Silder";
+import Slider from "./Slider";
 import usePlayer from "@/hooks/usePlayer";
 import { useEffect, useState } from "react";
 import useSound from "use-sound";
+import ProgressBar from './ProgressBar'; // Adjust the import path as necessary
 
 interface PlayerContentProps {
     song: Song;
@@ -23,6 +24,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     const player = usePlayer();
     const [volume, setVolume] = useState(1);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
     
     const Icon = isPlaying ? BsPauseFill: BsPlayFill;
     const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
@@ -79,6 +82,17 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         }
     }, [sound]);
 
+    useEffect(() => {
+        if (sound) {
+            const interval = setInterval(() => {
+                setCurrentTime(sound.seek() || 0); // Update currentTime
+                setDuration(sound.duration() || 0); // Update duration
+            }, 1000); // Update every second
+    
+            return () => clearInterval(interval); // Clear interval on unmount
+        }
+    }, [sound]);
+
     const handlePlay = () => {
         if (!isPlaying) {
             play();
@@ -95,94 +109,45 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         }
     }
 
+    const handleSeek = (time: number) => {
+        sound.seek(time);
+        setCurrentTime(time);
+    };
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 h-full">
-            <div className="
-                flex
-                w-full
-                justify-start
-            ">
-                <div className="flex items-center gap-x-4">
+            <div className="flex w-full justify-start">
+                <div className="flex items-center gap-x-3">
                     <MediaItem data={song} />
                     <LikeButton songId={song.id} />
                 </div>
             </div>
 
-            <div
-             className="
-              flex
-              md:hidden
-              col-auto
-              w-full
-              justify-end
-              items-center
-             "
-            >
+            <div className="flex md:hidden col-auto w-full justify-end items-center">
                 <div
-                 onClick={handlePlay}
-                 className="
-                  h-10
-                  w-10
-                  flex
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-white
-                  p-1
-                  cursor-pointer
-                 "
+                    onClick={handlePlay}
+                    className="h-10 w-10 flex items-center justify-center rounded-full bg-white p-1 cursor-pointer"
                 >
                     <Icon size={30} className="text-black" />
                 </div>
             </div>
 
-            <div
-             className="
-              hidden
-              h-full
-              md:flex
-              justify-center
-              items-center
-              w-full
-              max-w-[722px]
-              gap-x-6
-             "
-            >
+            <div className="hidden h-full md:flex justify-center items-center w-full max-w-[722px] gap-x-6">
                 <AiFillStepBackward 
-                 onClick={onPlayPrevious}
-                 size={30}
-                 className="
-                  text-neutral-400
-                  cursor-pointer
-                  hover:text-white
-                  transition
-                 "
+                    onClick={onPlayPrevious}
+                    size={30}
+                    className="text-neutral-400 cursor-pointer hover:text-white transition"
                 />
                 <div
-                 onClick={handlePlay}
-                 className="
-                  flex
-                  items-center
-                  justify-center
-                  h-10
-                  w-10
-                  rounded-full
-                  bg-white
-                  p-1
-                  cursor-pointer
-                 "
+                    onClick={handlePlay}
+                    className="flex items-center justify-center h-10 w-10 rounded-full bg-white p-1"
                 >
                     <Icon size={30} className="text-black" />
                 </div>
                 <AiFillStepForward 
                     onClick={onPlayNext}
                     size={30}
-                    className="
-                     text-neutral-400
-                     cursor-pointer
-                     hover:text-white
-                     transition
-                    "
+                    className="text-neutral-400 cursor-pointer hover:text-white transition"
                 />
             </div>
 
@@ -200,6 +165,13 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
                 </div>
             </div>
 
+        <div className="col-span-2 md:col-span-3 group">
+        <ProgressBar 
+            currentTime={currentTime} 
+            duration={duration} 
+            onSeek={handleSeek} 
+        />
+        </div>
         </div>
     );
 }
