@@ -88,7 +88,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
                 setCurrentTime(sound.seek() || 0); // Update currentTime
                 setDuration(sound.duration() || 0); // Update duration
             }, 1000); // Update every second
-    
+
             return () => clearInterval(interval); // Clear interval on unmount
         }
     }, [sound]);
@@ -117,7 +117,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 h-full">
             <div className="flex w-full justify-start">
-                <div className="flex items-center gap-x-3">
+                <div className="flex items-center gap-x-4">
                     <MediaItem data={song} />
                     <LikeButton songId={song.id} />
                 </div>
@@ -132,26 +132,33 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
                 </div>
             </div>
 
-            <div className="hidden h-full md:flex justify-center items-center w-full max-w-[722px] gap-x-6">
-                <AiFillStepBackward 
-                    onClick={onPlayPrevious}
-                    size={30}
-                    className="text-neutral-400 cursor-pointer hover:text-white transition"
-                />
-                <div
-                    onClick={handlePlay}
-                    className="flex items-center justify-center h-10 w-10 rounded-full bg-white p-1"
-                >
-                    <Icon size={30} className="text-black" />
+            <div className="hidden h-full md:flex flex-col justify-center items-center w-full max-w-[722px] gap-y-2">
+                <div className="flex justify-center items-center w-full gap-x-6">
+                    <AiFillStepBackward 
+                        onClick={onPlayPrevious}
+                        size={30}
+                        className="text-neutral-400 cursor-pointer hover:text-white transition"
+                    />
+                    <div
+                        onClick={handlePlay}
+                        className="flex items-center justify-center h-10 w-10 rounded-full bg-white p-1"
+                    >
+                        <Icon size={30} className="text-black" />
+                    </div>
+                    <AiFillStepForward 
+                        onClick={onPlayNext}
+                        size={30}
+                        className="text-neutral-400 cursor-pointer hover:text-white transition"
+                    />
                 </div>
-                <AiFillStepForward 
-                    onClick={onPlayNext}
-                    size={30}
-                    className="text-neutral-400 cursor-pointer hover:text-white transition"
+                <ProgressBar 
+                    currentTime={currentTime} 
+                    duration={duration} 
+                    onSeek={handleSeek} 
                 />
             </div>
 
-            <div className="hidden md:flex w-full justify-end pr-2">
+            <div className="hidden md:flex w-full justify-end pr-2 mt-4">
                 <div className="flex items-center gap-x-2 w-[120px]">
                     <VolumeIcon
                      onClick={toggleMute}
@@ -164,14 +171,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
                     />
                 </div>
             </div>
-
-        <div className="col-span-2 md:col-span-3 group">
-        <ProgressBar 
-            currentTime={currentTime} 
-            duration={duration} 
-            onSeek={handleSeek} 
-        />
-        </div>
         </div>
     );
 }

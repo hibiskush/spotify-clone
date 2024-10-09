@@ -17,12 +17,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ currentTime, duration, onSeek
   };
 
   return (
-    <div className="relative w-1/3 h-4 flex items-center mx-auto" onClick={handleSeek}>
+    <div className="relative w-full h-4 flex items-center mx-auto group" onClick={handleSeek}>
       {/* Wrapper for progress bar */}
-      <div className="relative w-full h-2 bg-[#4D4D4D] mx-2">
+      <div className="relative w-full h-2 bg-[#4D4D4D] mx-2 rounded-full">
         {/* Progress bar */}
         <div
-          className="absolute top-0 left-0 h-full bg-white group-hover:bg-green-500" 
+          className="absolute top-0 left-0 h-full bg-white group-hover:bg-green-500 rounded-full" 
           style={{ width: `${progress}%` }}
         >
           {/* Thumb */}
