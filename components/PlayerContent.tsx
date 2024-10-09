@@ -10,7 +10,8 @@ import Slider from "./Slider";
 import usePlayer from "@/hooks/usePlayer";
 import { useEffect, useState } from "react";
 import useSound from "use-sound";
-import ProgressBar from './ProgressBar'; // Adjust the import path as necessary
+import ProgressBar from './ProgressBar';
+import { LuRepeat, LuRepeat1, LuShuffle } from 'react-icons/lu';
 
 interface PlayerContentProps {
     song: Song;
@@ -26,8 +27,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    
-    const Icon = isPlaying ? BsPauseFill: BsPlayFill;
+    const [repeatState, setRepeatState] = useState('disable');
+    const [shuffleState, setShuffleState] = useState(false);
+
+    const Icon = isPlaying ? BsPauseFill : BsPlayFill;
     const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
 
     const onPlayNext = () => {
@@ -36,7 +39,13 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         }
 
         const currentIndex = player.ids.findIndex((id) => id === player.activeId);
-        const nextSong = player.ids[currentIndex + 1];
+        let nextSong;
+
+        if (shuffleState) {
+            nextSong = player.ids[Math.floor(Math.random() * player.ids.length)];
+        } else {
+            nextSong = player.ids[currentIndex + 1];
+        }
 
         if (!nextSong) {
             return player.setId(player.ids[0]);
@@ -70,7 +79,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
                 onPlayNext();
             },
             onpause: () => setIsPlaying(false),
-            format: ['mpeg','mp3','wav']
+            format: ['mpeg', 'mp3', 'wav']
         }
     );
 
@@ -114,6 +123,22 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         setCurrentTime(time);
     };
 
+    const handleRepeat = () => {
+        if (repeatState === 'disable') {
+            setRepeatState('enable repeat');
+        } else if (repeatState === 'enable repeat') {
+            setRepeatState('enable repeat one');
+        } else {
+            setRepeatState('disable');
+        }
+    };
+
+    const handleShuffle = () => {
+        console.log(shuffleState);
+        setShuffleState(!shuffleState);
+        
+    };
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 h-full">
             <div className="flex w-full justify-start">
@@ -134,7 +159,16 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
 
             <div className="hidden h-full md:flex flex-col justify-center items-center w-full max-w-[722px] gap-y-2">
                 <div className="flex justify-center items-center w-full gap-x-6">
-                    <AiFillStepBackward 
+                    <button
+                        onClick={handleShuffle}
+                        className="text-neutral-400 cursor-pointer hover:text-white transition"
+                    >
+                        <LuShuffle 
+                            color={shuffleState ? '#22C55E' : '#7D7D7D'} 
+                            size={20}
+                        />
+                    </button>
+                    <AiFillStepBackward
                         onClick={onPlayPrevious}
                         size={30}
                         className="text-neutral-400 cursor-pointer hover:text-white transition"
@@ -145,27 +179,48 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
                     >
                         <Icon size={30} className="text-black" />
                     </div>
-                    <AiFillStepForward 
+                    <AiFillStepForward
                         onClick={onPlayNext}
                         size={30}
                         className="text-neutral-400 cursor-pointer hover:text-white transition"
                     />
+                    <button
+                        onClick={handleRepeat}
+                        className="text-neutral-400 cursor-pointer hover:text-white transition"
+                    >
+                        {
+                            repeatState === 'disable' &&
+                            <LuRepeat
+                                color="#7D7D7D"
+                                size={20}
+                            />}
+                        {
+                            repeatState === 'enable repeat' && <LuRepeat 
+                                color="#22C55E" 
+                                size={20}
+                            />}
+                        {
+                            repeatState === 'enable repeat one' && <LuRepeat1
+                                color="#22C55E"
+                                size={20}
+                            />}
+                    </button>
                 </div>
-                <ProgressBar 
-                    currentTime={currentTime} 
-                    duration={duration} 
-                    onSeek={handleSeek} 
+                <ProgressBar
+                    currentTime={currentTime}
+                    duration={duration}
+                    onSeek={handleSeek}
                 />
             </div>
 
             <div className="hidden md:flex w-full justify-end pr-2 mt-4">
                 <div className="flex items-center gap-x-2 w-[120px]">
                     <VolumeIcon
-                     onClick={toggleMute}
-                     className="cursor-pointer"
-                     size={34}
+                        onClick={toggleMute}
+                        className="cursor-pointer"
+                        size={34}
                     />
-                    <Slider 
+                    <Slider
                         value={volume}
                         onChange={(value) => setVolume(value)}
                     />
