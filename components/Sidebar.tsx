@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Children } from "react"
 import { useMemo } from "react"
 import { HiHome } from "react-icons/hi";
