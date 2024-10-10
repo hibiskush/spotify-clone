@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Song } from "@/types";
 import MediaItem from "./MediaItem";
 import LikeButton from "./LikeButton";
@@ -8,7 +9,7 @@ import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import Slider from "./Slider";
 import usePlayer from "@/hooks/usePlayer";
-import { useEffect, useState } from "react";
+import usePlayerSettings from "@/hooks/usePlayerSettings";
 import useSound from "use-sound";
 import ProgressBar from './ProgressBar';
 import { LuRepeat, LuRepeat1, LuShuffle } from 'react-icons/lu';
@@ -23,12 +24,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     songUrl
 }) => {
     const player = usePlayer();
-    const [volume, setVolume] = useState(1);
+    const { volume, repeatState, shuffleState, setVolume, setRepeatState, setShuffleState } = usePlayerSettings();
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const [repeatState, setRepeatState] = useState('disable');
-    const [shuffleState, setShuffleState] = useState(false);
 
     const Icon = isPlaying ? BsPauseFill : BsPlayFill;
     const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
@@ -42,7 +41,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         let nextSong;
 
         if (shuffleState) {
-            nextSong = player.ids[Math.floor(Math.random() * player.ids.length)];
+            const filter = player.ids.filter((id) => id !== player.activeId);
+            const random_index = Math.floor(Math.random() * filter.length);
+            nextSong = filter[random_index];
         } else {
             nextSong = player.ids[currentIndex + 1];
         }
