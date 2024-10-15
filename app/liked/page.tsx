@@ -1,4 +1,5 @@
 import getLikedSongs from "@/actions/getLikedSongs";
+import getPlaylists from "@/actions/getPlaylists";
 import Header from "@/components/Header";
 import Image from "next/image";
 import LikedContent from "./components/LikedContent";
@@ -7,6 +8,7 @@ export const revalidate = 0;
 
 const Liked = async () => {
     const songs = await getLikedSongs();
+    const playlists = await getPlaylists();
 
     return (
         <div
@@ -15,7 +17,7 @@ const Liked = async () => {
           rounded-lg
           h-full
           w-full
-          overfliw-hidden
+          overflow-hidden
           overflow-y-auto
          "
         >
@@ -35,7 +37,7 @@ const Liked = async () => {
                          h-32
                          w-32
                          lg:h-44
-                         lg-w-44
+                         lg:w-44
                         ">
                             <Image 
                                 fill
@@ -63,13 +65,13 @@ const Liked = async () => {
                                 font-bold   
                              "
                             >
-                                Liked Songs
+                                Playlists
                             </h1>
                         </div>
                     </div>
                 </div>
             </Header>
-            <LikedContent songs={songs} />
+            <LikedContent songs={songs} playlists={playlists} />
         </div>
     );
 }
