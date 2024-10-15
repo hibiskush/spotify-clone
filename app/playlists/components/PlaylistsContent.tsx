@@ -1,6 +1,5 @@
 // app/playlists/components/PlaylistsContent.tsx
 "use client";
-import { useRouter } from "next/navigation";
 import useOnPlay from "@/hooks/useOnPlay";
 import Header from "@/components/Header";
 import MediaItem from "@/components/MediaItem";

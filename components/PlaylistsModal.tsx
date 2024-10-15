@@ -8,7 +8,6 @@ import Modal from "./Modal";
 import Input from "./Input";
 import Button from "./Button";
 import CustomSelect from "./CustomSelect";
-import toast from "react-hot-toast";
 import useGetPlaylists from "@/hooks/useGetPlaylists";
 import usePlayer from "@/hooks/usePlayer";
 

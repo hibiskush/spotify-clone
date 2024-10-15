@@ -14,7 +14,6 @@ import usePlayerSettings from "@/hooks/usePlayerSettings";
 import useSound from "use-sound";
 import ProgressBar from './ProgressBar';
 import { LuRepeat, LuRepeat1, LuShuffle } from 'react-icons/lu';
-import useGetPlaylists from "@/hooks/useGetPlaylists";
 import PlaylistsModal from "./PlaylistsModal";
 
 interface PlayerContentProps {
@@ -32,7 +31,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [showPlaylistInput, setShowPlaylistInput] = useState(false);
-    const [message, setMessage] = useState("");
+    const message = useState("");
 
     const Icon = isPlaying ? BsPauseFill : BsPlayFill;
     const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
